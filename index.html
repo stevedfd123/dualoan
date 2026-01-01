@@ -134,15 +134,6 @@
     }
     .btn-small{ padding:12px 16px; font-size:14px; }
 
-    .loading{ text-align:center; padding:60px 20px; }
-    .spinner{
-      border:4px solid #f3f3f3; border-top:4px solid #2196F3;
-      border-radius:50%; width:60px; height:60px;
-      animation:spin 1s linear infinite;
-      margin:0 auto 20px;
-    }
-    @keyframes spin{ 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
-
     .error-message{
       background:#ffebee; color:#c62828;
       padding:12px; border-radius:12px; margin-bottom:16px; font-size:14px;
@@ -190,7 +181,7 @@
     .feature-box.orange{ border-left:4px solid #FF9800; }
     .feature-box.purple{ border-left:4px solid #9C27B0; }
 
-    /* ✅ My Account (only the 2nd screenshot layout) */
+    /* My Account (unbold) */
     .summary-card{
       background:linear-gradient(135deg,#0d47a1 0%,#1e66c6 100%);
       border-radius:18px;
@@ -219,19 +210,18 @@
       z-index:2;
     }
     .summary-left .label{
-      font-size:14px;
-      opacity:0.9;
-      margin-bottom:10px;
+      font-size:14px; opacity:0.9; margin-bottom:10px;
+      font-weight:400;
     }
     .summary-left .total{
       font-size:44px;
-      font-weight:900;
+      font-weight:400;
       letter-spacing:0.3px;
       line-height:1;
     }
     .summary-left .total small{
       font-size:22px;
-      font-weight:900;
+      font-weight:400;
       opacity:0.95;
       margin-right:6px;
       vertical-align:top;
@@ -243,12 +233,10 @@
       background:rgba(255,255,255,0.14);
       border:1px solid rgba(255,255,255,0.25);
       color:#fff;
-      font-weight:800;
+      font-weight:700;
       box-shadow:none;
     }
-
     .loan-list{ display:flex; flex-direction:column; gap:14px; }
-
     .loan-card2{
       background:#fff;
       border-radius:18px;
@@ -270,21 +258,17 @@
       min-width:0;
     }
     .brand-logo{
-      width:44px;
-      height:44px;
-      border-radius:12px;
+      width:44px; height:44px; border-radius:12px;
       background:#e3f2fd;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       font-size:18px;
-      font-weight:900;
+      font-weight:700;
       color:#1565C0;
       flex-shrink:0;
     }
     .brand-name{
       font-size:18px;
-      font-weight:900;
+      font-weight:700;
       color:#111;
       white-space:nowrap;
       overflow:hidden;
@@ -296,7 +280,7 @@
       border-radius:999px;
       background:#fde9e6;
       color:#1e4e9d;
-      font-weight:900;
+      font-weight:700;
       box-shadow:none;
     }
     .rowline{
@@ -307,10 +291,55 @@
       padding:10px 0;
     }
     .rowline + .rowline{ border-top:1px solid #f0f0f0; }
-    .k{ font-size:14px; color:#111; opacity:0.85; }
-    .v{ font-size:16px; font-weight:900; color:#111; text-align:right; }
+    .k{ font-size:14px; color:#111; opacity:0.85; font-weight:400; }
+    .v{ font-size:16px; font-weight:400; color:#111; text-align:right; }
 
-    /* Details + Payment */
+    /* Pending Repayment (Image 1) */
+    .panel-title{
+      display:flex; align-items:center; gap:10px;
+      font-size:20px; font-weight:700;
+      color:#ff9800;
+      margin-bottom:14px;
+    }
+    .panel-title .dot{
+      width:24px; height:24px; border-radius:50%;
+      background:#ffe0b2;
+      display:flex; align-items:center; justify-content:center;
+      color:#ff9800;
+      border:1px solid #ffc107;
+      font-size:14px;
+      flex-shrink:0;
+    }
+    .summary-box{
+      background:#f7f7f7;
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.06);
+      margin-bottom:18px;
+    }
+    .sum-row{
+      display:flex;
+      justify-content:space-between;
+      padding:18px 0;
+      border-bottom:1px solid #ececec;
+      gap:20px;
+    }
+    .sum-row:last-child{ border-bottom:none; }
+    .sum-k{ color:#666; font-size:16px; }
+    .sum-v{ color:#111; font-size:16px; text-align:right; font-weight:500; }
+    .sum-v.red{ color:#ff3b30; font-weight:500; }
+    .full-repay{
+      width:100%;
+      background:#2196F3;
+      color:#fff;
+      border-radius:12px;
+      padding:18px;
+      font-size:18px;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(33,150,243,0.25);
+    }
+
+    /* Payment */
     .timer{
       background:linear-gradient(135deg,#ff5252 0%,#f44336 100%);
       color:white; padding:16px; border-radius:12px; text-align:center;
@@ -379,14 +408,6 @@
       <div id="error-message" class="error-message" style="display:none;"></div>
     </div>
 
-    <!-- Loading -->
-    <div class="screen" id="screen-loading">
-      <div class="loading">
-        <div class="spinner"></div>
-        <h2>Loading...</h2>
-      </div>
-    </div>
-
     <!-- Screen 2: Home -->
     <div class="screen" id="screen-home">
       <div class="back-button" onclick="goBackFromHome()">←</div>
@@ -439,7 +460,7 @@
       </div>
     </div>
 
-    <!-- ✅ Screen 3: My Account -->
+    <!-- Screen 3: My Account -->
     <div class="screen" id="screen-pending">
       <div class="back-button" onclick="goBackFromPending()">←</div>
 
@@ -460,39 +481,58 @@
       </div>
     </div>
 
-    <!-- Screen 4: Order Details -->
-    <div class="screen" id="screen-details">
-      <div class="back-button" onclick="goBackFromDetails()">←</div>
+    <!-- Screen 4: Pending Repayment Details -->
+    <div class="screen" id="screen-summary">
+      <div class="back-button" onclick="showScreen('screen-pending')">←</div>
 
       <div class="content-with-back">
-        <h1>Order Details</h1>
-
-        <div class="loan-card2" style="margin-top:12px;">
-          <div class="rowline" style="border-top:none; padding-top:0;">
-            <div class="k">Total Repayment Amount</div>
-            <div class="v">₹<span id="detail-amount">0</span></div>
-          </div>
-          <div class="rowline">
-            <div class="k">Order Number</div>
-            <div class="v" id="detail-order">-</div>
-          </div>
-          <div class="rowline">
-            <div class="k">IFSC</div>
-            <div class="v" id="detail-ifsc">-</div>
-          </div>
-          <div class="rowline">
-            <div class="k">Due Date</div>
-            <div class="v" id="detail-due">-</div>
-          </div>
-
-          <button class="btn-blue" style="margin-top:14px;" onclick="navigateToTab('payment')">Repay</button>
+        <div class="panel-title">
+          <div class="dot">🏛️</div>
+          <div>Pending Repayment</div>
         </div>
+
+        <div class="summary-box">
+          <div class="sum-row">
+            <div class="sum-k">Total Repayment Amount</div>
+            <div class="sum-v red">₹<span id="sum-total">0</span></div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Due Date</div>
+            <div class="sum-v" id="sum-due">-</div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Loan Amount</div>
+            <div class="sum-v">₹<span id="sum-loan">0</span></div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Late Fee</div>
+            <div class="sum-v red">₹<span id="sum-late">0</span></div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Tenure</div>
+            <div class="sum-v" id="sum-tenure">-</div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Application Date</div>
+            <div class="sum-v" id="sum-appdate">-</div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Name</div>
+            <div class="sum-v" id="sum-name">-</div>
+          </div>
+          <div class="sum-row">
+            <div class="sum-k">Overdue Days</div>
+            <div class="sum-v red"><span id="sum-overdue">0</span> days</div>
+          </div>
+        </div>
+
+        <button class="full-repay" onclick="navigateToTab('payment')">Repay</button>
       </div>
     </div>
 
-    <!-- Screen 5: Payment -->
+    <!-- Screen 5: Payment (NO IFSC) -->
     <div class="screen" id="screen-payment">
-      <div class="back-button" onclick="goBackFromPayment()">←</div>
+      <div class="back-button" onclick="showScreen('screen-summary')">←</div>
 
       <div class="content-with-back">
         <h1>Payment</h1>
@@ -509,12 +549,6 @@
           <label>VPA/UPI</label>
           <input type="text" id="upi" value="merchant@upi" readonly />
           <button class="btn-blue btn-small" onclick="copyText('upi')">Copy</button>
-        </div>
-
-        <div class="payment-info-row">
-          <label>IFSC</label>
-          <input type="text" id="ifsc" value="SBIN0005622" readonly />
-          <button class="btn-blue btn-small" onclick="copyText('ifsc')">Copy</button>
         </div>
 
         <p style="margin:20px 0 12px 0; font-weight:900; font-size:14px;">Enter UTR after payment</p>
@@ -570,22 +604,42 @@
   <script>
     let countdownInterval;
     let generatedOTP = "";
-
-    // ✅ Your fixed values for the 2 cards (2nd screenshot)
-    const LOANS = [
-      { provider:"Hi Rupee",  logoText:"H", repayment:41160, orderNo:"20140203499", ifsc:"SBIN0005622", dueDate:"2025-11-26" },
-      { provider:"Candy Bay", logoText:"C", repayment:45220, orderNo:"20140203499", ifsc:"SBIN0005622", dueDate:"2025-11-26" }
-    ];
-
     let selectedIndex = 0;
 
-    function formatINR(n){
-      return Number(n || 0).toLocaleString("en-IN");
-    }
+    // ✅ Loans (Hi Rupee updated with YOUR details)
+    const LOANS = [
+      {
+        provider:"Hi Rupee",
+        logoText:"H",
+        repayment:41160,
+        orderNo:"20140203499",
+        dueDate:"2025-11-26",
+        loanAmount:29400,
+        lateFee:11760,
+        tenure:"7 days",
+        applicationDate:"2025-12-03",
+        name:"Lohitha MS",
+        overdueDays:36
+      },
+      {
+        provider:"Candy Bay",
+        logoText:"C",
+        repayment:45220,
+        orderNo:"20140203499",
+        dueDate:"2025-11-26",
+        // keep same unless you give different values:
+        loanAmount:32300,
+        lateFee:12920,
+        tenure:"-20 days",
+        applicationDate:"2025-12-16",
+        name:"Lohitha MS",
+        overdueDays:36
+      }
+    ];
 
-    window.addEventListener("load", () => {
-      simulateInstallation();
-    });
+    function formatINR(n){ return Number(n || 0).toLocaleString("en-IN"); }
+
+    window.addEventListener("load", () => simulateInstallation());
 
     function simulateInstallation(){
       const statusEl = document.getElementById("install-status");
@@ -601,7 +655,9 @@
         clearInterval(interval);
         statusEl.textContent = "Installation Complete!";
         buttonEl.classList.add("show");
-        setTimeout(() => goToLogin(), 800);
+
+        // ✅ IMPORTANT: NO auto redirect anymore.
+        // User must click the button to go to login.
       }, 4000);
     }
 
@@ -645,10 +701,7 @@
         registrationScreen.classList.remove("active");
 
         document.getElementById("bottom-nav").classList.add("active");
-
-        // render my account list
         renderMyAccount();
-
         showScreen("screen-home");
       } else {
         errorDiv.textContent = "❌ Invalid OTP. Please try again.";
@@ -658,13 +711,9 @@
 
     function showScreen(screenId){
       document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      document.getElementById("screen-loading").classList.add("active");
-      setTimeout(() => {
-        document.getElementById("screen-loading").classList.remove("active");
-        document.getElementById(screenId).classList.add("active");
-        window.scrollTo(0,0);
-        if (screenId === "screen-payment") startCountdown();
-      }, 300);
+      document.getElementById(screenId).classList.add("active");
+      window.scrollTo(0,0);
+      if (screenId === "screen-payment") startCountdown();
     }
 
     function renderMyAccount(){
@@ -679,7 +728,7 @@
               <div class="brand-logo">${l.logoText}</div>
               <div class="brand-name">${l.provider}</div>
             </div>
-            <button class="repay-pill" onclick="openDetails(${idx})">Repay</button>
+            <button class="repay-pill" onclick="openPendingRepayment(${idx})">Repay</button>
           </div>
 
           <div class="rowline" style="border-top:none; padding-top:0;">
@@ -689,7 +738,7 @@
 
           <div class="rowline">
             <div class="k">Order Number</div>
-            <div class="v">${l.orderNo} (IFSC: ${l.ifsc})</div>
+            <div class="v">${l.orderNo}</div>
           </div>
 
           <div class="rowline">
@@ -699,29 +748,33 @@
         </div>
       `).join("");
 
-      // default selected loan for payment screen
-      openDetails(0, true);
+      setPaymentAmountFromLoan(0);
     }
 
-    function openDetails(idx, silent=false){
+    function openPendingRepayment(idx){
       selectedIndex = idx;
       const l = LOANS[selectedIndex];
 
-      document.getElementById("detail-amount").textContent = formatINR(l.repayment);
-      document.getElementById("detail-order").textContent = l.orderNo;
-      document.getElementById("detail-ifsc").textContent = l.ifsc;
-      document.getElementById("detail-due").textContent = l.dueDate;
+      document.getElementById("sum-total").textContent = formatINR(l.repayment);
+      document.getElementById("sum-due").textContent = l.dueDate;
+      document.getElementById("sum-loan").textContent = formatINR(l.loanAmount);
+      document.getElementById("sum-late").textContent = formatINR(l.lateFee);
+      document.getElementById("sum-tenure").textContent = l.tenure;
+      document.getElementById("sum-appdate").textContent = l.applicationDate;
+      document.getElementById("sum-name").textContent = l.name;
+      document.getElementById("sum-overdue").textContent = l.overdueDays;
 
+      setPaymentAmountFromLoan(idx);
+      showScreen("screen-summary");
+    }
+
+    function setPaymentAmountFromLoan(idx){
+      const l = LOANS[idx];
       document.getElementById("amount").value = l.repayment;
-      document.getElementById("ifsc").value = l.ifsc;
-
-      if (!silent) showScreen("screen-details");
     }
 
     function goBackFromHome(){ return; }
     function goBackFromPending(){ navigateToTab("home"); }
-    function goBackFromDetails(){ showScreen("screen-pending"); }
-    function goBackFromPayment(){ showScreen("screen-details"); }
 
     function navigateToTab(tab){
       document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active-tab"));
