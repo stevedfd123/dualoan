@@ -1,22 +1,18 @@
 <!DOCTYPE html>
-<html lang="EN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loan App</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui;background:#f5f5f5}
-.screen{display:none;padding:20px;min-height:100vh;background:#fff}
+body{margin:0;font-family:system-ui;background:#f5f5f5}
+.screen{display:none;min-height:100vh;padding:20px;background:#fff}
 .screen.active{display:block}
 h1{margin-bottom:16px}
-button{padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
-button:disabled{opacity:.4;cursor:not-allowed}
-
 .loan-card{
   background:#fff;border-radius:16px;padding:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,.08);margin-bottom:14px
+  box-shadow:0 10px 24px rgba(0,0,0,.08);margin-bottom:14px
 }
 .loan-top{display:flex;justify-content:space-between;align-items:center}
 .brand{display:flex;gap:12px;align-items:center}
@@ -25,11 +21,24 @@ button:disabled{opacity:.4;cursor:not-allowed}
   background:#e3f2fd;color:#1565C0;
   display:flex;align-items:center;justify-content:center;font-weight:800
 }
-.repay-btn{background:#fde9e6;color:#1e4e9d;border-radius:999px}
+.repay-btn{
+  padding:10px 18px;border-radius:999px;
+  background:#fde9e6;border:none;font-weight:700;cursor:pointer
+}
+.repay-btn.repaid{background:#e8f5e9;color:#2e7d32}
 .row{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eee}
-
-.back{margin-bottom:10px;display:inline-block;font-size:20px;cursor:pointer}
-.success{text-align:center;font-size:20px;margin-top:60px}
+.center{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.spinner{
+  width:60px;height:60px;border:6px solid #eee;
+  border-top:6px solid #1565C0;border-radius:50%;
+  animation:spin 1s linear infinite;margin-bottom:20px
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.back{cursor:pointer;margin-bottom:12px;font-size:20px}
+.summary-box{background:#f7f7f7;border-radius:14px;padding:16px}
+.sum-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e0e0e0}
+.sum-row:last-child{border-bottom:none}
+.red{color:#e53935;font-weight:600}
 </style>
 </head>
 
@@ -38,54 +47,63 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <!-- LOGIN -->
 <div class="screen active" id="login">
   <h1>Loan App</h1>
-  <input id="phone" placeholder="Enter mobile number" style="padding:12px;width:100%;margin-bottom:12px">
+  <input id="phone" placeholder="Enter mobile number"
+         style="padding:12px;width:100%;margin-bottom:12px">
   <button onclick="login()">Login</button>
-  <p id="login-error" style="color:red;margin-top:10px"></p>
+  <p id="err" style="color:red"></p>
 </div>
 
 <!-- MY ACCOUNT -->
 <div class="screen" id="account">
   <h1>My Account</h1>
-  <h2>Total Amount Due: ₹<span id="total">0</span></h2>
+  <h2>Total amount Due ₹<span id="total">0</span></h2>
   <div id="loanList"></div>
 </div>
 
-<!-- PENDING -->
-<div class="screen" id="pending">
-  <div class="back" onclick="show('account')">← Back</div>
-  <h1>Pending Repayment</h1>
-  <p>Amount: ₹<span id="p-amount"></span></p>
-  <p>Due Date: <span id="p-date"></span></p>
-  <button onclick="show('payment')">Repay</button>
-</div>
-
-<!-- PAYMENT -->
-<div class="screen" id="payment">
-  <div class="back" onclick="show('pending')">← Back</div>
-  <h1>Payment</h1>
-  <p>Pay ₹<span id="pay-amount"></span></p>
-  <input placeholder="Enter 12-digit UTR" maxlength="12" id="utr" style="padding:12px;width:100%;margin:10px 0">
-  <button onclick="submit()">Submit</button>
-</div>
-
-<!-- SUCCESS -->
-<div class="screen" id="success">
-  <div class="success">
-    ✅ Payment Submitted<br><br>
-    <button onclick="show('account')">Back to Home</button>
+<!-- CANDY PARK PROCESS -->
+<div class="screen" id="processing">
+  <div class="center">
+    <div class="spinner"></div>
+    <h2>Processing Repayment</h2>
+    <p>Please wait…</p>
   </div>
 </div>
 
-<script>
-const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSqEJvs5Tnz2x1oCo5xOURlss-qdpBeF8Ew2-7wllFw17LU_jaxJ0YF-Gw8ncqUpAru6LfK25HlL__U/pub?output=csv";
+<div class="screen" id="repaid">
+  <div class="center">
+    <h1>✅ Repaid</h1>
+    <p>Your loan has been repaid successfully</p>
+    <button onclick="show('account')">Back to My Account</button>
+  </div>
+</div>
 
-let sheetData={}
-let userRow=null;
-let selectedLoan=null;
+<!-- CASH BAY PENDING -->
+<div class="screen" id="pending">
+  <div class="back" onclick="show('account')">←</div>
+  <h1>🏛️ Pending Repayment</h1>
+
+  <div class="summary-box">
+    <div class="sum-row"><span>Total Repayment Amount</span><span class="red">₹<span id="sum-total"></span></span></div>
+    <div class="sum-row"><span>Due Date</span><span id="sum-due"></span></div>
+    <div class="sum-row"><span>Loan Amount</span><span>₹<span id="sum-loan"></span></span></div>
+    <div class="sum-row"><span>Late Fee</span><span class="red">₹<span id="sum-late"></span></span></div>
+    <div class="sum-row"><span>Tenure</span><span id="sum-tenure"></span></div>
+    <div class="sum-row"><span>Application Date</span><span id="sum-app"></span></div>
+    <div class="sum-row"><span>Name</span><span id="sum-name"></span></div>
+    <div class="sum-row"><span>Overdue Days</span><span class="red"><span id="sum-overdue"></span> days</span></div>
+  </div>
+
+  <button style="margin-top:20px;width:100%" onclick="alert('Continue to existing payment flow')">Repay</button>
+</div>
+
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vSqEJvs5Tnz2x1oCo5xOURlss-qdpBeF8Ew2-7wllFw17LU_jaxJ0YF-Gw8ncqUpAru6LfK25HlL__U/pub?gid=0&single=true&output=csv";
+
+let sheet={}, row=null, candyPaid=false;
 
 const LOANS=[
-  {provider:"Candy Park",logo:"H",repayment:41160,due:"2025-11-26"},
-  {provider:"Cash Bay",logo:"C",repayment:0,due:"-"}
+  {p:"Candy Park",logo:"H",repay:41160,order:"20140203499",due:"2025-11-26"},
+  {p:"Cash Bay",logo:"C",repay:0,order:"",due:""}
 ];
 
 function show(id){
@@ -93,77 +111,76 @@ function show(id){
   document.getElementById(id).classList.add("active");
 }
 
-async function fetchSheet(){
-  const res=await fetch(CSV_URL);
-  const txt=await res.text();
-  const lines=txt.trim().split("\n");
-  const headers=lines[0].split(",");
-  for(let i=1;i<lines.length;i++){
-    const row=lines[i].split(",");
-    const obj={};
-    headers.forEach((h,j)=>obj[h.trim()]=row[j]?.trim());
-    const mobile=obj["Mobile"]?.replace(/\D/g,"").slice(-10);
-    if(mobile) sheetData[mobile]=obj;
+async function fetchCSV(){
+  const t=await (await fetch(CSV_URL)).text();
+  const l=t.trim().split("\n").map(r=>r.split(","));
+  for(let i=1;i<l.length;i++){
+    const m=l[i][0]?.replace(/\D/g,"").slice(-10);
+    if(m) sheet[m]=l[i];
   }
 }
 
 async function login(){
-  await fetchSheet();
-  const phone=document.getElementById("phone").value.replace(/\D/g,"").slice(-10);
-  if(!sheetData[phone]){
-    document.getElementById("login-error").textContent="Mobile not found";
-    return;
-  }
-  userRow=sheetData[phone];
-  bindCashBay();
-  renderLoans();
+  await fetchCSV();
+  const p=document.getElementById("phone").value.replace(/\D/g,"").slice(-10);
+  if(!sheet[p]){document.getElementById("err").textContent="Mobile not found";return;}
+  row=sheet[p];
+
+  LOANS[1].order=row[0];
+  LOANS[1].repay=Number(row[1]||0);
+  LOANS[1].due=row[6]||"-";
+
+  render();
   show("account");
 }
 
-function bindCashBay(){
-  const cb=LOANS.find(l=>l.provider==="Cash Bay");
-  cb.repayment=Number(userRow["Repayment Amount"]||0);
-  cb.due=userRow["Due Date"]||"-";
-}
-
-function renderLoans(){
-  let total=LOANS.reduce((s,l)=>s+l.repayment,0);
+function render(){
+  const total=LOANS.reduce((s,l)=>s+l.repay,0);
   document.getElementById("total").textContent=total.toLocaleString("en-IN");
   const box=document.getElementById("loanList");
   box.innerHTML="";
   LOANS.forEach(l=>{
-    const div=document.createElement("div");
-    div.className="loan-card";
-    div.innerHTML=`
+    box.innerHTML+=`
+    <div class="loan-card">
       <div class="loan-top">
         <div class="brand">
           <div class="logo">${l.logo}</div>
-          <strong>${l.provider}</strong>
+          <strong>${l.p}</strong>
         </div>
-        <button class="repay-btn" ${l.provider!=="Candy Park"?"disabled":""}
-        onclick="openLoan('${l.provider}')">Repay</button>
+        <button class="repay-btn ${candyPaid&&l.p==="Candy Park"?"repaid":""}"
+          onclick="repay('${l.p}')">
+          ${candyPaid&&l.p==="Candy Park"?"Repaid":"Repay"}
+        </button>
       </div>
-      <div class="row"><span>Repayment</span><span>₹${l.repayment.toLocaleString("en-IN")}</span></div>
+      <div class="row"><span>Repayment Amount</span><span>₹${l.repay.toLocaleString("en-IN")}</span></div>
+      <div class="row"><span>Order Number</span><span>${l.order}</span></div>
       <div class="row"><span>Due Date</span><span>${l.due}</span></div>
-    `;
-    box.appendChild(div);
+    </div>`;
   });
 }
 
-function openLoan(p){
-  if(p!=="Candy Park") return;
-  selectedLoan=LOANS[0];
-  document.getElementById("p-amount").textContent=selectedLoan.repayment.toLocaleString("en-IN");
-  document.getElementById("p-date").textContent=selectedLoan.due;
-  document.getElementById("pay-amount").textContent=selectedLoan.repayment.toLocaleString("en-IN");
-  show("pending");
-}
-
-function submit(){
-  const utr=document.getElementById("utr").value;
-  if(!/^\d{12}$/.test(utr)){alert("UTR must be 12 digits");return;}
-  show("success");
+function repay(p){
+  if(p==="Candy Park" && !candyPaid){
+    show("processing");
+    setTimeout(()=>{
+      candyPaid=true;
+      render();
+      show("repaid");
+    },5000);
+  }
+  if(p==="Cash Bay"){
+    document.getElementById("sum-total").textContent=row[1];
+    document.getElementById("sum-loan").textContent=row[2];
+    document.getElementById("sum-late").textContent=row[3];
+    document.getElementById("sum-tenure").textContent=row[4];
+    document.getElementById("sum-app").textContent=row[5];
+    document.getElementById("sum-due").textContent=row[6];
+    document.getElementById("sum-name").textContent=row[7];
+    document.getElementById("sum-overdue").textContent=row[8];
+    show("pending");
+  }
 }
 </script>
+
 </body>
 </html>
